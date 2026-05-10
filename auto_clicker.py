@@ -11,8 +11,11 @@ class AutoClicker:
     def __init__(self, root):
         self.root = root
         self.root.title("自动连点器")
-        self.root.geometry("500x350")  # 增大窗口大小
+        self.root.geometry("520x400")  # 增大窗口大小
         self.root.resizable(False, False)
+        
+        # 设置窗口图标和样式
+        self.root.configure(bg="#f0f0f0")
         
         self.status = False
         self.hotkey = "F6"
@@ -26,62 +29,78 @@ class AutoClicker:
         self.setup_hotkey()
     
     def create_ui(self):
+        # 配置样式
+        style = ttk.Style()
+        style.configure('TButton', padding=6, font=('Arial', 10))
+        style.configure('TLabel', font=('Arial', 10))
+        style.configure('TRadiobutton', font=('Arial', 10))
+        
         # 顶部按钮
         button_frame = ttk.Frame(self.root)
-        button_frame.pack(pady=10, padx=20, fill="x")
-        ttk.Button(button_frame, text="热键设置", command=self.open_hotkey_settings).pack(side="left", padx=10, expand=True, fill="x")
-        ttk.Button(button_frame, text="关于", command=self.open_about_window).pack(side="left", padx=10, expand=True, fill="x")
+        button_frame.pack(pady=15, padx=25, fill="x")
+        ttk.Button(button_frame, text="热键设置", command=self.open_hotkey_settings, width=15).pack(side="left", padx=15)
+        ttk.Button(button_frame, text="关于", command=self.open_about_window, width=15).pack(side="right", padx=15)
+        
+        # 主内容区域
+        main_frame = ttk.Frame(self.root, padding=20)
+        main_frame.pack(fill="both", expand=True)
         
         # 第一行：显示热键
-        frame1 = ttk.Frame(self.root)
-        frame1.pack(pady=10, padx=20, fill="x")
-        ttk.Label(frame1, text="启动/停止热键:", width=15).pack(side="left")
-        self.hotkey_label = ttk.Label(frame1, text=self.hotkey, font=("Arial", 12, "bold"))
-        self.hotkey_label.pack(side="left", expand=True, fill="x")
+        row1 = ttk.Frame(main_frame)
+        row1.pack(pady=12, fill="x")
+        ttk.Label(row1, text="启动/停止热键:", width=16, font=('Arial', 11)).pack(side="left")
+        self.hotkey_label = ttk.Label(row1, text=self.hotkey, font=("Arial", 14, "bold"), foreground="#0066cc")
+        self.hotkey_label.pack(side="left", padx=10)
         
         # 第二行：重复次数
-        frame2 = ttk.Frame(self.root)
-        frame2.pack(pady=10, padx=20, fill="x")
-        ttk.Label(frame2, text="重复次数 (0=无限):", width=15).pack(side="left")
+        row2 = ttk.Frame(main_frame)
+        row2.pack(pady=12, fill="x")
+        ttk.Label(row2, text="重复次数:", width=16, font=('Arial', 11)).pack(side="left")
         self.repeat_var = tk.StringVar(value="0")
-        ttk.Entry(frame2, textvariable=self.repeat_var, width=10).pack(side="left")
+        ttk.Entry(row2, textvariable=self.repeat_var, width=12, font=('Arial', 11)).pack(side="left", padx=10)
+        ttk.Label(row2, text="(0=无限)", font=('Arial', 9, 'italic')).pack(side="left")
         
-        # 第三行：每次点击间隔秒数
-        frame3 = ttk.Frame(self.root)
-        frame3.pack(pady=10, padx=20, fill="x")
-        ttk.Label(frame3, text="每次点击间隔秒数:", width=15).pack(side="left")
+        # 第三行：每次点击间隔毫秒数
+        row3 = ttk.Frame(main_frame)
+        row3.pack(pady=12, fill="x")
+        ttk.Label(row3, text="点击间隔:", width=16, font=('Arial', 11)).pack(side="left")
         self.interval_var = tk.StringVar(value="0")
-        ttk.Entry(frame3, textvariable=self.interval_var, width=10).pack(side="left")
+        ttk.Entry(row3, textvariable=self.interval_var, width=12, font=('Arial', 11)).pack(side="left", padx=10)
+        ttk.Label(row3, text="毫秒", font=('Arial', 11)).pack(side="left")
         
         # 第四行：点击类型选项
-        frame4 = ttk.Frame(self.root)
-        frame4.pack(pady=10, padx=20, fill="x")
-        ttk.Label(frame4, text="点击类型:", width=15).pack(side="left")
+        row4 = ttk.Frame(main_frame)
+        row4.pack(pady=12, fill="x")
+        ttk.Label(row4, text="点击类型:", width=16, font=('Arial', 11)).pack(side="left")
         self.click_type_var = tk.StringVar(value="点击")
-        ttk.Radiobutton(frame4, text="拖动 (1s)", variable=self.click_type_var, value="拖动").pack(side="left", padx=5)
-        ttk.Radiobutton(frame4, text="点击", variable=self.click_type_var, value="点击").pack(side="left", padx=5)
-        ttk.Radiobutton(frame4, text="双击", variable=self.click_type_var, value="双击").pack(side="left", padx=5)
+        click_type_frame = ttk.Frame(row4)
+        click_type_frame.pack(side="left")
+        ttk.Radiobutton(click_type_frame, text="拖动", variable=self.click_type_var, value="拖动", width=8).pack(side="left", padx=8)
+        ttk.Radiobutton(click_type_frame, text="点击", variable=self.click_type_var, value="点击", width=8).pack(side="left", padx=8)
+        ttk.Radiobutton(click_type_frame, text="双击", variable=self.click_type_var, value="双击", width=8).pack(side="left", padx=8)
         
         # 第五行：位置获取方式
-        frame5 = ttk.Frame(self.root)
-        frame5.pack(pady=10, padx=20, fill="x")
-        ttk.Label(frame5, text="位置获取:", width=15).pack(side="left")
+        row5 = ttk.Frame(main_frame)
+        row5.pack(pady=12, fill="x")
+        ttk.Label(row5, text="位置获取:", width=16, font=('Arial', 11)).pack(side="left")
         self.position_var = tk.StringVar(value="实时获取鼠标位置")
-        ttk.Radiobutton(frame5, text="通过点击确认点击位置", variable=self.position_var, value="通过点击确认点击位置").pack(side="left", padx=5)
-        ttk.Radiobutton(frame5, text="实时获取鼠标位置", variable=self.position_var, value="实时获取鼠标位置").pack(side="left", padx=5)
+        position_frame = ttk.Frame(row5)
+        position_frame.pack(side="left")
+        ttk.Radiobutton(position_frame, text="点击确认位置", variable=self.position_var, value="通过点击确认点击位置", width=14).pack(side="left", padx=5)
+        ttk.Radiobutton(position_frame, text="实时获取位置", variable=self.position_var, value="实时获取鼠标位置", width=14).pack(side="left", padx=5)
         
         # 第六行：状态显示
-        frame6 = ttk.Frame(self.root)
-        frame6.pack(pady=10, padx=20, fill="x")
-        ttk.Label(frame6, text="状态:", width=15).pack(side="left")
-        self.status_label = ttk.Label(frame6, text="停止", foreground="red")
+        row6 = ttk.Frame(main_frame)
+        row6.pack(pady=12, fill="x")
+        ttk.Label(row6, text="当前状态:", width=16, font=('Arial', 11)).pack(side="left")
+        self.status_label = ttk.Label(row6, text="停止", font=("Arial", 14, "bold"), foreground="#cc3333")
         self.status_label.pack(side="left")
         
         # 第七行：点击位置显示
-        frame7 = ttk.Frame(self.root)
-        frame7.pack(pady=10, padx=20, fill="x")
-        ttk.Label(frame7, text="当前点击位置:", width=15).pack(side="left")
-        self.position_label = ttk.Label(frame7, text=self.click_position)
+        row7 = ttk.Frame(main_frame)
+        row7.pack(pady=12, fill="x")
+        ttk.Label(row7, text="点击位置:", width=16, font=('Arial', 11)).pack(side="left")
+        self.position_label = ttk.Label(row7, text=self.click_position, font=('Arial', 10))
         self.position_label.pack(side="left")
     
     def open_hotkey_settings(self):
@@ -128,7 +147,7 @@ class AutoClicker:
         about_window.geometry("400x300")
         about_window.resizable(False, False)
         
-        ttk.Label(about_window, text="自动连点器 v1.0", font=("Arial", 14)).pack(pady=20)
+        ttk.Label(about_window, text="自动连点器 v2.0", font=("Arial", 14)).pack(pady=20)
         ttk.Label(about_window, text="制作团队:", font=("Arial", 12)).pack(pady=10, anchor="w", padx=20)
         ttk.Label(about_window, text="上海木木个人工作室").pack(pady=2, anchor="w", padx=40)
         ttk.Label(about_window, text="获取本软件:", font=("Arial", 12)).pack(pady=10, anchor="w", padx=20)
@@ -157,7 +176,7 @@ class AutoClicker:
         time.sleep(0.1)
         
         repeat_times = int(self.repeat_var.get())
-        click_interval = float(self.interval_var.get())
+        click_interval_ms = int(self.interval_var.get())
         click_type = self.click_type_var.get()
         position_mode = self.position_var.get()
         
@@ -267,9 +286,9 @@ class AutoClicker:
                 self.status_label.config(text="停止", foreground="red")
                 break
             
-            # 等待间隔
-            if click_interval > 0:
-                time.sleep(click_interval)
+            # 等待间隔（毫秒转秒）
+            if click_interval_ms > 0:
+                time.sleep(click_interval_ms / 1000)
             else:
                 # 即使无间隔，也添加微小延迟以避免CPU占用过高
                 time.sleep(0.001)

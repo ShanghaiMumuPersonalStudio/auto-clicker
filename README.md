@@ -31,7 +31,7 @@
 ### 🙏 关注我们  
 想了解更多实用工具？欢迎访问工作室主页：  
 
-[![上海木木个人工作室](https://img.shields.io/github/followers/StevenLinStudio?label=Follow&style=social)](https://github.com/StevenLinStudio)  
+[![上海木木个人工作室](https://img.shields.io/github/followers/ShanghaiMumuPersonalStudio?label=Follow&style=social)](https://github.com/StevenLinStudio)  
 
 （点击按钮即可关注，获取第一手技术更新～）  
 
